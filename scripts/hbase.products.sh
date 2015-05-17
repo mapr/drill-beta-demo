@@ -1,4 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -x
+
+echo "script hbase.products.sh"
 
 HBVERSION=$( cat /opt/mapr/hbase/hbaseversion )
 
@@ -19,9 +21,12 @@ echo 'create '"'${TABLENAME}'"',"details","pricing"' | hbase shell
 
 #import
 
-hadoop jar $HBASE_HOME/hbase-0.94.21-mapr-1407.jar \
+echo "Running importtsv command on products.csv for HBase"
+
+hadoop jar $HBASE_HOME/hbase-0.98.9-mapr-1503.jar \
         importtsv -Dimporttsv.separator=, \
         -Dimporttsv.columns=HBASE_ROW_KEY,details:name,details:category,pricing:price \
         ${TABLENAME} \
         /mapr/${CLUSTERNAME}/drill-beta-demo/data/output/products/products.csv
 
+echo "Finished running importtsv command on products.csv for HBase"

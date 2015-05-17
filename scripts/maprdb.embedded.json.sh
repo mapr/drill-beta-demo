@@ -1,4 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -x
+
+echo "script maprdb.embedded.sh"
 
 CLUSTERNAME=$( head -n 1 /opt/mapr/conf/mapr-clusters.conf|awk {'print $1'} )
 
@@ -25,8 +27,9 @@ HBVERSION=$( cat /opt/mapr/hbase/hbaseversion )
 
 #import
 
-
+echo "importing data from embedded.input.txt"
 
 cat /mapr/${CLUSTERNAME}/drill-beta-demo/scripts/embedded.input.txt | /usr/bin/hbase shell
 
+echo "finished importing data from embedded.input.txt"
 

@@ -1,4 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -x
+
+echo "script maprdb.products.sh"
 
 CLUSTERNAME=$( head -n 1 /opt/mapr/conf/mapr-clusters.conf|awk {'print $1'} )
 
@@ -35,9 +37,12 @@ CLUSTERNAME=$( cat /opt/mapr/conf/mapr-clusters.conf |awk {'print $1'} )
 
 #import
 
+echo "Running ImportTsv on products.csv for maprdb"
+
 #hadoop jar $HBASE_HOME/hbase-0.94.21-mapr-1407.jar \
 hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=, \
         -Dimporttsv.columns=HBASE_ROW_KEY,details:name,details:category,pricing:price \
         ${TABLEPATH} \
         /mapr/${CLUSTERNAME}/drill-beta-demo/data/output/products/products.csv
 
+echo "Finished running ImportTsv on products.csv for maprdb"

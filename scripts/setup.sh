@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -x
 
 #first, check that this is a sandbox
 
@@ -40,6 +40,8 @@ fi
 DRILL_REV=$( ls /opt/mapr/drill )
 DRILL_REV=${DRILL_REV:-0.5.0}
 
+echo "DRILL_REV = ${DRILL_REV}"
+
 #modify max memory and max heap in drill-env.sh
 
 #sed -r -i 's/8G/2G/' /opt/mapr/drill/${DRILL_REV}/conf/drill-env.sh
@@ -50,7 +52,7 @@ sed -r -i 's/2181/5181/' /opt/mapr/drill/${DRILL_REV}/conf/drill-override.conf
 
 #set hadoop_home
 
-#echo "export HADOOP_HOME="/opt/mapr/hadoop/hadoop-0.20.2/"" >> /opt/mapr/drill/${DRILL_REV}/conf/drill-env.sh
+#echo "export HADOOP_HOME=/opt/mapr/hadoop/hadoop-0.20.2/" >> /opt/mapr/drill/${DRILL_REV}/conf/drill-env.sh
 
 # start drill
 #/opt/mapr/server/configure.sh -R
@@ -74,15 +76,16 @@ lsof -i:8047
 lsof -i:31010
 
 # now, copy the datasets into place
+echo "Copying datasets into place"
 
 REPODIR=${NFSMOUNT}/drill-beta-demo
 DATADIR=${NFSMOUNT}/data
 
 mkdir -p ${DATADIR}
 
-cp -R ${REPODIR}/data/output/* ${DATADIR}
+cp -Rfv ${REPODIR}/data/output/* ${DATADIR}
 
-chown mapr:mapr ${DATADIR}
+chown -R mapr:mapr ${DATADIR}
 
 
 #make the HBASE table..not right now because we dont have hbase regionserver/master installed on the sandbox
@@ -93,18 +96,22 @@ chown mapr:mapr ${DATADIR}
 #make the products table in MapRDB as well
 
 #products
+echo "starting script maprdb.products.sh"
 sh ${REPODIR}/scripts/maprdb.products.sh
 
 #customers
+echo "starting script maprdb.customers.sh"
 sh ${REPODIR}/scripts/maprdb.customers.sh
 
 #special embedded json table
+echo "starting script maprdb.embedded.json.sh"
 sh ${REPODIR}/scripts/maprdb.embedded.json.sh
 
 #make the HIVE tables
 
 #first drop them
 
+echo "Dropping Hive tables customers and orders"
 /usr/bin/hive -e "drop table customers;"
 
 /usr/bin/hive -e "drop table orders;"
@@ -113,10 +120,13 @@ sh ${REPODIR}/scripts/maprdb.embedded.json.sh
 #edit 09/10/2014 : we're now putting customers into maprDB and not HIVE
 #/usr/bin/hive -f ${REPODIR}/scripts/customers.hive.table.hql
 
+echo "Running HiveQL orders.hive.hql"
+
 /usr/bin/hive -f ${REPODIR}/scripts/orders.hive.hql
 
 # add some aliases
 
+echo "Adding sqlline to PATH"
 echo "alias sqlline='/opt/mapr/drill/${DRILL_REV}/bin/sqlline -u jdbc:drill:'" >> /etc/profile
 
 
