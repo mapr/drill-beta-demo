@@ -86,6 +86,7 @@ mkdir -p ${DATADIR}
 cp -Rfv ${REPODIR}/data/output/* ${DATADIR}
 
 chown -R mapr:mapr ${DATADIR}
+chmod a+r ${DATADIR}/*
 
 
 #make the HBASE table..not right now because we dont have hbase regionserver/master installed on the sandbox
