@@ -38,7 +38,10 @@ fi
 #figure out drill version, if it was pre-installed
 
 DRILL_REV=$( ls /opt/mapr/drill )
-DRILL_REV=${DRILL_REV:-0.5.0}
+if [ -f /opt/mapr/drill/drillversion ]; then
+    DRILL_REV=`cat /opt/mapr/drill/drillversion`
+fi
+DRILL_REV=${DRILL_REV:-1.2.0}
 
 echo "DRILL_REV = ${DRILL_REV}"
 
@@ -128,7 +131,7 @@ echo "Running HiveQL orders.hive.hql"
 # add some aliases
 
 echo "Adding sqlline to PATH"
-echo "alias sqlline='/opt/mapr/drill/${DRILL_REV}/bin/sqlline -u jdbc:drill:'" >> /etc/profile
+echo "alias sqlline='/opt/mapr/drill/drill-${DRILL_REV}/bin/sqlline -u jdbc:drill:'" >> /etc/profile
 
 
 

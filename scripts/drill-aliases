@@ -1,1 +1,1 @@
-alias sqlline='/ opt/mapr/drill/drill-0.4.0/bin/sqlline -u jdbc:drill:'
+alias sqlline='/ opt/mapr/drill/drill-1.2.0/bin/sqlline -u jdbc:drill:'
