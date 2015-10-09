@@ -84,7 +84,7 @@ echo "Copying datasets into place"
 REPODIR=${NFSMOUNT}/drill-beta-demo
 DATADIR=${NFSMOUNT}/data
 
-mkdir -p ${DATADIR}
+mkdir -pv ${DATADIR}/views
 
 cp -Rfv ${REPODIR}/data/output/* ${DATADIR}
 
